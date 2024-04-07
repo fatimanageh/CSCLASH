@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/new/prefix1"/>
+    <qresource prefix="/Map">
+        <file>archery tower.png</file>
+        <file>canon.png</file>
+        <file>Castle.jpg</file>
+        <file>desert land.png</file>
+        <file>fence.png</file>
+        <file>green land.jpg</file>
+        <file>ice land.png</file>
+        <file>witchey tower.png</file>
+        <file>MapTextFiles.qrc</file>
+    </qresource>
+</RCC>
