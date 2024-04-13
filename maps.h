@@ -1,7 +1,9 @@
 #ifndef MAPS_H
 #define MAPS_H
-#include<QMediaPlayer>
-#include <QDialog>
+#include"mainwindow.h"
+#include<QDialog>
+
+class MainWindow;
 
 namespace Ui {
 class Maps;
@@ -13,11 +15,6 @@ class Maps : public QDialog
 
 public:
     explicit Maps(QWidget *parent = nullptr);
-    QMediaPlayer* click;
-    QMediaPlayer* war;
-    QAudioOutput* War;
-    QMediaPlayer* backgroundm;
-    QAudioOutput* Backgroundm;
 
     ~Maps();
 
@@ -27,13 +24,9 @@ private slots:
     void on_pushButtonmap2_clicked();
 
     void on_pushButtonmap3_clicked();
-signals:
-    void stopBackgroundMusicRequested();
-
-
 private:
+    MainWindow* mainWindow;
     Ui::Maps *ui;
-
 };
 
 #endif // MAPS_H

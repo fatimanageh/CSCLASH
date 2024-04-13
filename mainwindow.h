@@ -16,23 +16,27 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
 
-private slots:
-    void on_pushButtonStart_clicked();
-
-    void on_pushButtonSettings_clicked();
-
-
-
-
-private:
-    Ui::MainWindow *ui;
+    QMediaPlayer* war;
     QMediaPlayer* intromusic;
     QMediaPlayer* click;
     QMediaPlayer* backgroundMusic;
+    QObject* selectedMap;
+
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
+
+    void setSoundVolume(float);
+    void setMusicVolume(float);
+
+private slots:
+
+    void on_pushButtonStart_clicked();
+    void on_pushButtonSettings_clicked();
+
+private:
+    Ui::MainWindow* ui;
+
 };
 #endif // MAINWINDOW_H

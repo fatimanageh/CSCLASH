@@ -1,21 +1,24 @@
 #ifndef MAP1_H
 #define MAP1_H
 
-#include <QDialog>
-#include <QObject>
+#include<QDialog>
+#include<QObject>
 #include<QGraphicsScene>
 #include"tiles.h"
-class MAP1 : public QDialog , public Tiles
+#include"mainwindow.h"
+
+class Map1 : public QObject , public Tiles
 {
 
 public:
-    explicit MAP1(QWidget *parent = nullptr);
+    explicit Map1(QWidget *parent = nullptr);
+    QGraphicsScene* scene;
 
 private:
-    QGraphicsScene* scene;
     void setupScene();
     void loadmapfromfile(const QString &file);
     Tiles tilemap1;
+    MainWindow* mainWindow;
 };
 
 #endif // MAP1_H

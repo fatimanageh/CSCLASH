@@ -11,41 +11,44 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow),
-    intromusic( new QMediaPlayer(this)),
-    click(new QMediaPlayer(this))
+    backgroundMusic(new QMediaPlayer(this)),
+    intromusic(new QMediaPlayer(this)),
+    click(new QMediaPlayer(this)),
+    war(new QMediaPlayer(this))
 {
 
     ui->setupUi(this);
+
     QPixmap background (":/Back/5dcf59a8d44ba57f29414c411.jpg");
     background = background.scaled(this->size(), Qt::IgnoreAspectRatio);
     QPalette palette;
     palette.setBrush(QPalette::Window, background);
     this->setPalette(palette);
 
-    backgroundMusic = new QMediaPlayer();
     QAudioOutput* Backgroundmusic= new QAudioOutput();
-    Backgroundmusic = new QAudioOutput();
-    backgroundMusic->setSource(QUrl::fromLocalFile("C:/Users/ASUS/Documents/TRIALCLASHOFCLANS/backgroundmusic.mp3"));
-    Backgroundmusic->setVolume(100);
+    backgroundMusic->setSource(QUrl("qrc:/sounds/backgroundmusic.mp3"));
+    Backgroundmusic->setVolume(1);
     backgroundMusic->setAudioOutput(Backgroundmusic);
+    backgroundMusic->play();
 
-
-    QMediaPlayer* click=new QMediaPlayer();
     QAudioOutput* Click= new QAudioOutput();
-    click->setSource(QUrl::fromLocalFile("C:/Users/ASUS/Documents/TRIALCLASHOFCLANS/click.mp3"));
-    Click->setVolume(100);
+    click->setSource(QUrl("qrc:/sounds/click.mp3"));
+    Click->setVolume(1);
     click->setAudioOutput(Click);
 
-    intromusic->setSource(QUrl::fromLocalFile("C:/Users/ASUS/Documents/TRIALCLASHOFCLANS/intro.mp3"));
+    intromusic->setSource(QUrl("qrc:/sounds/intro.mp3"));
     QAudioOutput *Intromusic =new QAudioOutput();
-    Intromusic->setVolume(100);
+    Intromusic->setVolume(1);
     intromusic->setAudioOutput(Intromusic);
     intromusic->play();
 
-
-
-
+    war->setSource(QUrl("qrc:/sounds/war.mp3"));
+    QAudioOutput *War =new QAudioOutput();
+    War->setVolume(1);
+    war->setAudioOutput(War);
 }
+
+
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -54,15 +57,26 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButtonStart_clicked()
 {
-
     intromusic->stop();
     click->play();
     backgroundMusic->stop();
+    war->play();
     hide();
-    Maps* map= new Maps();
+    Maps* map= new Maps(this);
     map->show();
 }
 
+void MainWindow::setSoundVolume(float value)
+{
+    this->click->audioOutput()->setVolume(value);
+}
+
+void MainWindow::setMusicVolume(float value)
+{
+    this->backgroundMusic->audioOutput()->setVolume(value);
+    this->intromusic->audioOutput()->setVolume(value);
+    this->war->audioOutput()->setVolume(value);
+}
 
 void MainWindow::on_pushButtonSettings_clicked()
 {
@@ -71,7 +85,7 @@ void MainWindow::on_pushButtonSettings_clicked()
     click->play();
 
     hide();
-    Settings* settings=new Settings();
+    Settings* settings = new Settings(this, click, this->click->audioOutput()->volume(), this->backgroundMusic->audioOutput()->volume());
     settings->show();
 }
 
