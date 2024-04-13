@@ -4,5 +4,6 @@
         <file>pngwing.com.png</file>
         <file>Castle.png</file>
         <file>Fence.png</file>
+        <file>fence_256x128.png</file>
     </qresource>
 </RCC>

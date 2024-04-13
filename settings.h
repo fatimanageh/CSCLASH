@@ -12,7 +12,7 @@ class Settings : public QDialog
     Q_OBJECT
 
 public:
-    explicit Settings(QWidget *parent = nullptr);
+    explicit Settings(QWidget *parent = nullptr, QMediaPlayer* = nullptr, float = 100, float = 100);
     ~Settings();
 
 private slots:
@@ -28,10 +28,7 @@ private slots:
 
 private:
     Ui::Settings *ui;
-    QMediaPlayer *backgroundm;
-    QMediaPlayer *click;
-    QAudioOutput *Backgroundm;
-    QAudioOutput *Click;
+    QMediaPlayer *itsClick;
 };
 
 #endif // SETTINGS_H

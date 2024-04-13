@@ -7,43 +7,36 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include<QLayout>
+#include"citizen.h"
 
-MAP1::MAP1(QWidget *parent)
-    : QDialog(parent)
+Map1::Map1(QWidget *parent)
+    : QObject(parent)
 {
-
-
     scene = new QGraphicsScene();
-
-
+    this->mainWindow = static_cast<MainWindow*>(parent);
     setupScene();
 }
 
 
-    void MAP1::setupScene()
-    {
+void Map1::setupScene()
+{
+    loadmapfromfile(":/text/map1.txt");
+    QGraphicsView* view = new QGraphicsView(scene);
+    view->setFixedSize(scene->width(), scene->height());
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-        loadmapfromfile(":/text/map1.txt");
-        QGraphicsView* view = new QGraphicsView(scene);
-        view->setFixedSize(scene->width(), scene->height());
-        view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        view->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
-        view->setSceneRect(scene->sceneRect());
-
-
-        view->show();
-
-    }
+    view->show();
+}
 
 
-    void MAP1::loadmapfromfile(const QString &filename)
-    {
+void Map1::loadmapfromfile(const QString &filename)
+{
 
     QFile file(filename);
     if (!file.open(QFile::ReadOnly | QFile::Text))
     {
-        QMessageBox::information(this, "Error", "File is not open");
+        QMessageBox::information(this->mainWindow, "Error", "File is not open");
         return;
     }
     QTextStream in(&file);
@@ -53,33 +46,67 @@ MAP1::MAP1(QWidget *parent)
     int pixelWidth = 100; // Width of each pixel
     int pixelHeight = 100; // Height of each pixel
 
+    int i = 0;
+    QList<QString> lines;
+
     while (!in.atEnd()) {
         Tiles tilemap1;
-        QString line = in.readLine();
-        QStringList characters = line.split(",", Qt::SkipEmptyParts);
-        for (const QString& character : characters) {
-            if (character == "0") {
+        lines.append(in.readLine());
+    }
+
+    for (int i = 0; i < lines.count(); i++)
+    {
+        QString line = lines[i];
+        for (int j = 0; j < line.length() / 2; j++)
+        {
+            QChar character = line[j * 2];
+            if (character == '0') {
                 QGraphicsPixmapItem *image1 = new QGraphicsPixmapItem(tilemap1.map1land.scaled(pixelWidth, pixelHeight));
                 image1->setPos(posX, posY);
                 scene->addItem(image1);
-            } else if (character == "1") {
+            } else if (character == '1') {
                 QGraphicsPixmapItem *image2 = new QGraphicsPixmapItem(tilemap1.map1Castle.scaled(pixelWidth, pixelHeight));
                 image2->setPos(posX, posY);
                 scene->addItem(image2);
-            } else if (character == "2") {
+            } else if (character == '2') {
                 QGraphicsPixmapItem *image3 = new QGraphicsPixmapItem(tilemap1.map1Canon.scaled(pixelWidth, pixelHeight));
                 image3->setPos(posX, posY);
                 scene->addItem(image3);
-            } else if (character == "3") {
-                QGraphicsPixmapItem *image4 = new QGraphicsPixmapItem(tilemap1.map1Fence.scaled(pixelWidth, pixelHeight));
-                image4->setPos(posX, posY);
-                scene->addItem(image4);
+            } else if (character == '3') {
+                QChar charLeft = (j != 0) ? line[j - 1] : 'N';
+                QChar charRight = (j != (line.length() - 1)) ? line[j + 1] : 'N';
+                QChar charUp = (i != 0) ? lines[i - 1][j] : 'N';
+                QChar charDown = (i != (lines.count() - 1)) ? lines[i + 1][j] : 'N';
+
+                // Check neighboring nodes if they are fences to determine the correct fence picture
+                QString corner = "3";
+                if (charLeft == '3' && charUp == '3' && charRight == '3' && charDown == '3') {
+                    corner = "center";
+                } else if (charLeft == '3' && charUp == '3') {
+                    corner = "topLeft";
+                } else if (charRight == '3' && charUp == '3') {
+                    corner = "topRight";
+                } else if (charLeft == '3' && charDown == '3') {
+                    corner = "bottomLeft";
+                } else if (charRight == '3' && charDown == '3') {
+                    corner = "bottomRight";
+                } else if (charLeft == '3' && charRight == '3') {
+                    corner = "horozintal";
+                } else {
+                    corner = "vertical";
+                }
+
+
+                QGraphicsPixmapItem* fence = new QGraphicsPixmapItem(tilemap1.fences1[corner].scaled(pixelWidth, pixelHeight));
+
+                fence->setPos(posX, posY);
+                scene->addItem(fence);
             }
-            posX += pixelWidth; // Move to the next position on X-axis
+            posX += pixelWidth;
         }
-        posX = 0; // Reset position X
-        posY += pixelHeight; // Move to the next position on Y-axis
+        posX = 0;
+        posY += pixelHeight;
     }
 
     file.close();
-    }
+}

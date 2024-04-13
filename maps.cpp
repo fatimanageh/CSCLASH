@@ -5,17 +5,10 @@
 #include"map3.h"
 #include<QMediaplayer>
 #include<QAudioOutput>
-#include"game.h"
 
-extern Game* game;
 Maps::Maps(QWidget *parent)
     : QDialog(parent)
-    , ui(new Ui::Maps),
-    click(new QMediaPlayer(this)),
-    war(new QMediaPlayer(this)),
-    War(new QAudioOutput(this)),
-    backgroundm(new QMediaPlayer(this)),
-    Backgroundm(new QAudioOutput(this))
+    , ui(new Ui::Maps)
 {
     ui->setupUi(this);
     QPixmap background (":/Back/Background.jpeg");
@@ -30,20 +23,7 @@ Maps::Maps(QWidget *parent)
     QPixmap Map3(":/map3/ice land.png");
     ui->Map3label->setPixmap(Map3);
 
-    backgroundm->setSource(QUrl::fromLocalFile("C:/Users/ASUS/Documents/TRIALCLASHOFCLANS/backgroundmusic.mp3"));
-    Backgroundm->setVolume(100);
-    backgroundm->setAudioOutput(Backgroundm);
-    backgroundm->play();
-    click->setSource(QUrl::fromLocalFile("C:/Users/ASUS/Documents/TRIALCLASHOFCLANS/click.mp3"));
-    QAudioOutput *Click =new QAudioOutput();
-    Click->setVolume(100);
-    click->setAudioOutput(Click);
-
-
-
-   war->setSource(QUrl::fromLocalFile("C:/Users/ASUS/Documents/TRIALCLASHOFCLANS/war.mp3"));
-    War->setVolume(100);
-    war->setAudioOutput(War);
+    this->mainWindow = static_cast<MainWindow*>(this->parent());
 }
 
 Maps::~Maps()
@@ -54,37 +34,24 @@ Maps::~Maps()
 
 void Maps::on_pushButtonmap1_clicked()
 {
-
-    backgroundm->stop();
-    click->play();
-    war->play();
+    mainWindow->click->play();
     hide();
-    MAP1* map1 = new MAP1();
-    map1->show();
-
+    Map1* map1 = new Map1(this->mainWindow);
 }
 
 
 void Maps::on_pushButtonmap2_clicked()
 {
-    backgroundm->stop();
-    click->play();
-    war->play();
-    hide();
-    Map2* map2 = new Map2();
-    map2->show();
-
+    mainWindow->click->play();
+    destroy();
+    Map2* map2 = new Map2(this->mainWindow);
 }
 
 
 void Maps::on_pushButtonmap3_clicked()
 {
-    backgroundm->stop();
-    click->play();
-    war->play();
-    hide();
-    Map3* map3 = new Map3();
-    map3->show();
-
+    mainWindow->click->play();
+    destroy();
+    Map3* map3 = new Map3(this->mainWindow);
 }
 

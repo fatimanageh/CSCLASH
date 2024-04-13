@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QObject>
 #include <QWidget>
+#include <QMap>
 #include<QPixmap>
 class Tiles: public QObject
 {
@@ -15,8 +16,8 @@ public:
     void settilemap1();
     QPixmap map1land;
     QPixmap map1Castle;
-    QPixmap map1Fence;
     QPixmap map1Canon;
+    QPixmap map1fence;
     QPixmap map2land;
     QPixmap map2Castle;
     QPixmap map2Fence;
@@ -25,6 +26,7 @@ public:
     QPixmap map3Castle;
     QPixmap map3Fence;
     QPixmap map3Canon;
+    QMap<QString, QPixmap> fences1;
     int index;
 
 
