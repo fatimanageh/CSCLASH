@@ -7,7 +7,6 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include<QLayout>
-#include"citizen.h"
 
 Map1::Map1(QWidget *parent)
     : QObject(parent)
@@ -60,7 +59,7 @@ void Map1::loadmapfromfile(const QString &filename)
         for (int j = 0; j < line.length() / 2; j++)
         {
             QChar character = line[j * 2];
-            if (character == '0') {
+            if (character == '0' || character == '3') {
                 QGraphicsPixmapItem *image1 = new QGraphicsPixmapItem(tilemap1.map1land.scaled(pixelWidth, pixelHeight));
                 image1->setPos(posX, posY);
                 scene->addItem(image1);
@@ -73,7 +72,7 @@ void Map1::loadmapfromfile(const QString &filename)
                 image3->setPos(posX, posY);
                 scene->addItem(image3);
             } else if (character == '3') {
-                QChar charLeft = (j != 0) ? line[j - 1] : 'N';
+                /*QChar charLeft = (j != 0) ? line[j - 1] : 'N';
                 QChar charRight = (j != (line.length() - 1)) ? line[j + 1] : 'N';
                 QChar charUp = (i != 0) ? lines[i - 1][j] : 'N';
                 QChar charDown = (i != (lines.count() - 1)) ? lines[i + 1][j] : 'N';
@@ -100,7 +99,7 @@ void Map1::loadmapfromfile(const QString &filename)
                 QGraphicsPixmapItem* fence = new QGraphicsPixmapItem(tilemap1.fences1[corner].scaled(pixelWidth, pixelHeight));
 
                 fence->setPos(posX, posY);
-                scene->addItem(fence);
+                scene->addItem(fence);*/
             }
             posX += pixelWidth;
         }
