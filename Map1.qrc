@@ -3,7 +3,8 @@
         <file>green land.jpg</file>
         <file>pngwing.com.png</file>
         <file>Castle.png</file>
-        <file>Fence.png</file>
-        <file>fence_256x128.png</file>
+        <file>fence_00.png</file>
+        <file>fence_01.png</file>
+        <file>fence_02.png</file>
     </qresource>
 </RCC>
