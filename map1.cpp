@@ -1,5 +1,7 @@
 #include "map1.h"
 #include "tiles.h"
+#include "node.h"
+#include "pathfinder.h"
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>
@@ -62,25 +64,35 @@ void Map1::loadmapfromfile(const QString &filename)
         lines.append(in.readLine());
     }
 
+    QHash<QPoint, Node*> grid;
+
     for (int i = 0; i < lines.count(); i++)
     {
         QString line = lines[i];
         for (int j = 0; j < line.length() / 2; j++)
         {
+            Node* node = new Node(QPoint(i, j));
             QChar character = line[j * 2];
-            if (character == '0' || character == '3') {
+            if (character == '0') {
+                node->isWalkable = true;
                 QGraphicsPixmapItem *image1 = new QGraphicsPixmapItem(tilemap1.map1land.scaled(pixelWidth, pixelHeight));
                 image1->setPos(posX, posY);
                 scene->addItem(image1);
             } else if (character == '1') {
+                node->isWalkable = false;
                 QGraphicsPixmapItem *image2 = new QGraphicsPixmapItem(tilemap1.map1Castle.scaled(pixelWidth, pixelHeight));
                 image2->setPos(posX, posY);
                 scene->addItem(image2);
             } else if (character == '2') {
+                node->isWalkable = false;
                 QGraphicsPixmapItem *image3 = new QGraphicsPixmapItem(tilemap1.map1Canon.scaled(pixelWidth, pixelHeight));
                 image3->setPos(posX, posY);
                 scene->addItem(image3);
             } else if (character == '3') {
+                node->isWalkable = false;
+                QGraphicsPixmapItem *image1 = new QGraphicsPixmapItem(tilemap1.map1fence.scaled(pixelWidth, pixelHeight));
+                image1->setPos(posX, posY);
+                scene->addItem(image1);
                 /*QChar charLeft = (j != 0) ? line[j - 1] : 'N';
                 QChar charRight = (j != (line.length() - 1)) ? line[j + 1] : 'N';
                 QChar charUp = (i != 0) ? lines[i - 1][j] : 'N';
@@ -109,12 +121,18 @@ void Map1::loadmapfromfile(const QString &filename)
 
                 fence->setPos(posX, posY);
                 scene->addItem(fence);*/
+
             }
+            grid[node->coords] = node;
             posX += pixelWidth;
         }
         posX = 0;
         posY += pixelHeight;
     }
+
+    QMessageBox::information(this->mainWindow, "Error", QString::number(grid.count()));
+    PathFinder path(QPoint(0,0), QPoint(9,9), grid);
+
 
     file.close();
 

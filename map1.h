@@ -2,6 +2,7 @@
 #define MAP1_H
 
 #include<QDialog>
+#include<QHash>
 #include<QObject>
 #include<QGraphicsScene>
 #include"tiles.h"

@@ -18,6 +18,8 @@ SOURCES += \
     map2.cpp \
     map3.cpp \
     maps.cpp \
+    node.cpp \
+    pathfinder.cpp \
     settings.cpp \
     tiles.cpp
 
@@ -29,6 +31,8 @@ HEADERS += \
     map2.h \
     map3.h \
     maps.h \
+    node.h \
+    pathfinder.h \
     settings.h \
     tiles.h
 
