@@ -7,6 +7,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include<QLayout>
+#include "Player.h"
 
 Map1::Map1(QWidget *parent)
     : QObject(parent)
@@ -14,11 +15,19 @@ Map1::Map1(QWidget *parent)
     scene = new QGraphicsScene();
     this->mainWindow = static_cast<MainWindow*>(parent);
     setupScene();
+
+    //added
+    Player* player= new Player;
+    scene->addItem(player);
+    player->setPos(800,-800);
+
 }
 
 
 void Map1::setupScene()
 {
+
+
     loadmapfromfile(":/text/map1.txt");
     QGraphicsView* view = new QGraphicsView(scene);
     view->setFixedSize(scene->width(), scene->height());
@@ -108,4 +117,5 @@ void Map1::loadmapfromfile(const QString &filename)
     }
 
     file.close();
+
 }

@@ -10,6 +10,8 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Enemy.cpp \
+    Player.cpp \
     main.cpp \
     mainwindow.cpp \
     map1.cpp \
@@ -20,6 +22,8 @@ SOURCES += \
     tiles.cpp
 
 HEADERS += \
+    Enemy.h \
+    Player.h \
     mainwindow.h \
     map1.h \
     map2.h \
@@ -44,4 +48,6 @@ RESOURCES += \
     Map2.qrc \
     Map3.qrc \
     Sounds.qrc \
+    assets/delete.qrc \
+    res.qrc \
     textfiles.qrc
