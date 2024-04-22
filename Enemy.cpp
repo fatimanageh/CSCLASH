@@ -1,32 +1,66 @@
-#include"Enemy.h"
-#include<QTimer>
-#include<QGraphicsScene>
-#include <QList>
-#include <stdlib.h>
+#include "enemy.h"
+#include <QMessageBox>
 
-
-Enemy::Enemy(QGraphicsItem *parent):QObject(), QGraphicsPixmapItem(parent){
-    int random_number=rand()%900;
-    setPos(random_number, 0);
-    setPixmap(QPixmap(":/photos/enemy.png").scaled(100,100));
-
-
-    QTimer* timer= new QTimer(this);
-    connect (timer, SIGNAL(timeout()),this,SLOT(move()) );
-    timer->start(50);
+float dotProduct(QPointF a, QPointF b)
+{
+    return a.x() * b.x() + a.y() * b.y();
 }
 
-void Enemy::move(){
-    if(pos().x()==500){
-    setPos(x(),y()+5);
-    }
-
-    else if(pos().x()<500){
-        setPos(x()+5,y()+5);
-    }
-    else {
-        setPos(x()-5,y()+5);
-    }
-
-
+QPointF lerp(QPointF a, QPointF b, float t)
+{
+    return (1-t) * a + t * b;
 }
+
+float inverseLerp(QPointF a, QPointF b, QPointF v)
+{
+    QPointF ab = b - a;
+    QPointF av = v - a;
+
+    float nominator = dotProduct(ab, av);
+    float denominator = dotProduct(ab, ab);
+
+    return (nominator / denominator); // Or you can do it by components (i.e ab.y / av.y
+    //but I like this because it looks more elegant
+}
+
+Enemy::Enemy(QPoint coords, QPixmap pixMap) : QGraphicsPixmapItem(nullptr), QObject(nullptr)
+{
+    setPixmap(pixMap);
+    this->coords = coords;
+}
+void Enemy::processPath(QList<Node*> path, bool isCastlePath)
+{
+    this->currentNodeOnPath = 0;
+    this->currentPath = path;
+    this->isCastlePath = isCastlePath;
+    currentTimer = new QTimer();
+    connect(currentTimer, SIGNAL(timeout()), this, SLOT (moveOnPath()));
+    currentTimer->start(15);
+}
+
+void Enemy::moveOnPath()
+{
+    if (currentNodeOnPath == currentPath.count() - 1 && !isCastlePath)
+    {
+        emit needNewPath();
+        delete currentTimer;
+    }
+
+
+    Node* currentNode = currentPath[currentNodeOnPath];
+    Node* nextNode = currentPath[currentNodeOnPath + 1];
+
+    float currentValue = inverseLerp(QPointF(currentNode->coords) * 100, QPointF(nextNode->coords) * 100, pos());
+
+
+    QPointF newPoint = lerp(QPointF(currentNode->coords) * 100, QPointF(nextNode->coords) * 100, currentValue + 0.005);
+
+    setPos(newPoint);
+
+    if (currentValue >= 1)
+    {
+        QMessageBox::information(nullptr, "changing", "changing");
+        currentNodeOnPath++;
+    }
+}
+
