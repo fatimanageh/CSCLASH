@@ -3,22 +3,17 @@
 
 #include <QGraphicsPixmapItem>
 #include <QObject>
-#include <QGraphicsItem>
+#include <map1.h>
 
-class Player: public QObject, public QGraphicsPixmapItem{
+class Player : public QObject {
+
     Q_OBJECT
+
+    Map1* map;
+
 public:
-    Player(QGraphicsItem* parent=0);
+    explicit Player(Map1* = nullptr);
     void keyPressEvent(QKeyEvent* event);
-
-public slots:
-    void spawn();
-
-
-
-
-
-
 };
 
 

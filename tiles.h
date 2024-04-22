@@ -6,10 +6,8 @@
 #include <QWidget>
 #include <QMap>
 #include<QPixmap>
-class Tiles: public QObject
+class Tiles
 {
-    Q_OBJECT
-
 
 public:
     Tiles();

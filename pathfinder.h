@@ -15,7 +15,7 @@ public:
 
     QList<Node*> GetNeighbours(Node*, QPoint, QPoint, QHash<QPoint, Node*>);
 
-    QList<QPoint> path;
+    QList<Node*> path;
     PathFinder(QPoint, QPoint, QHash<QPoint, Node*>);
 };
 

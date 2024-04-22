@@ -2,23 +2,24 @@
 #include "math.h"
 #include <QList>
 #include <QPoint>
+#include <QMessageBox>
 
 
 PathFinder::PathFinder(QPoint start, QPoint end, QHash<QPoint, Node*> grid)
 {
     int minX = 0;
     int minY = 0;
-    int maxX = 9;
-    int maxY = 10;
+    int maxX = 8;
+    int maxY = 8;
 
 
-
-    for (int i = minX; i < maxX; i++)
+    for (int i = minX; i <= maxX; i++)
     {
-        for (int j = minY; j < minY; j++)
+        for (int j = minY; j <= maxY; j++)
         {
-            grid[QPoint(i, j)]->connectedTo = nullptr;
-            grid[QPoint(i, j)]->gCost = INT32_MAX;
+            Node* node = grid.value(QPoint(i, j));
+            node->connectedTo = nullptr;
+            node->gCost = INT32_MAX;
         }
     }
 
@@ -26,12 +27,14 @@ PathFinder::PathFinder(QPoint start, QPoint end, QHash<QPoint, Node*> grid)
     QPoint max = QPoint(maxX, maxY);
     QList<Node*> openList;
     QList<Node*> closedList;
-    Node* startNode = new Node(start);
+    Node* startNode = grid[start];
+
+
+
     startNode->gCost = 0;
     startNode->hCost = CalculateDistance(start, end);
 
     openList.push_back(startNode);
-
     while(openList.count() > 0)
     {
         Node* lowestfCostNode = GetLowestfCostNode(openList);
@@ -44,19 +47,21 @@ PathFinder::PathFinder(QPoint start, QPoint end, QHash<QPoint, Node*> grid)
         }
         closedList.push_back(lowestfCostNode);
 
+
         if (lowestfCostNode->coords.x() == end.x() && lowestfCostNode->coords.y() == end.y())
         {
             ConstructPath(lowestfCostNode);
             return;
         }
 
-        foreach(Node* neighbour, GetNeighbours(lowestfCostNode, min, max, grid))
+        QList<Node*> neighbours = GetNeighbours(lowestfCostNode, min, max, grid);
+
+        foreach(Node* neighbour, neighbours)
         {
             if(closedList.contains(neighbour) || !neighbour->isWalkable) continue;
 
-            int tentativegCost = lowestfCostNode->gCost + CalculateDistance(start, neighbour->coords);
-
-            if (tentativegCost < neighbour->gCost)
+            int tentativegCost = lowestfCostNode->gCost + CalculateDistance(lowestfCostNode->coords, neighbour->coords);
+            if (tentativegCost < neighbour->gCost || !openList.contains(neighbour))
             {
                 neighbour->gCost = tentativegCost;
                 neighbour->hCost = CalculateDistance(neighbour->coords, end);
@@ -70,10 +75,10 @@ PathFinder::PathFinder(QPoint start, QPoint end, QHash<QPoint, Node*> grid)
 
 int PathFinder::CalculateDistance(QPoint a, QPoint b)
 {
-    int x = abs(a.x() - b.x());
-    int y = abs(a.y() - b.y());
+    int dstX = abs(a.x() - b.x());
+    int dstY = abs(a.y() - b.y());
 
-    return fmin(x, y) * 14 + 10 * abs(x - y);
+    return fmin(dstX, dstY) * 14 + 10 * abs(dstX - dstY);
 }
 
 Node* PathFinder::GetLowestfCostNode(QList<Node*> list)
@@ -82,7 +87,7 @@ Node* PathFinder::GetLowestfCostNode(QList<Node*> list)
     for (int i = 1; i < list.count(); i++)
     {
         Node* currentNode = list.at(i);
-        if (currentNode->getfCost() < leastfCostNode->getfCost() || currentNode->getfCost() == leastfCostNode->getfCost() && currentNode->hCost < leastfCostNode->hCost)
+        if (currentNode->getfCost() < leastfCostNode->getfCost() || (currentNode->getfCost() == leastfCostNode->getfCost() && currentNode->hCost < leastfCostNode->hCost))
         {
             leastfCostNode = currentNode;
         }
@@ -93,16 +98,15 @@ Node* PathFinder::GetLowestfCostNode(QList<Node*> list)
 
 void PathFinder::ConstructPath(Node* end)
 {
-    QList<QPoint> pathReversed;
-    pathReversed.push_back(end->coords);
+    QList<Node*> pathReversed;
+    pathReversed.push_back(end);
 
     Node* currentNode = end;
     while(currentNode->connectedTo != nullptr)
     {
-        pathReversed.push_back(currentNode->connectedTo->coords);
+        pathReversed.push_back(currentNode->connectedTo);
         currentNode = currentNode->connectedTo;
     }
-
     for (int i = pathReversed.count() - 1; i >= 0; i--)
     {
         path.push_back(pathReversed.at(i));
@@ -112,6 +116,7 @@ void PathFinder::ConstructPath(Node* end)
 QList<Node*> PathFinder::GetNeighbours(Node* node, QPoint min, QPoint max, QHash<QPoint, Node*> grid)
 {
     QList<Node*> neighbours;
+    neighbours.clear();
     for(int i = -1; i <= 1; i++)
     {
         for(int j = -1; j <= 1; j++)

@@ -10,13 +10,12 @@ public:
     Node(QPoint);
     QPoint coords; //In int
 
-    int gCost = 0;
-    int hCost = INT32_MAX;
+    int gCost = INT32_MAX;
+    int hCost = 0;
     Node* connectedTo;
 
 
     bool isWalkable;
-    bool isVisited;
     int getfCost()
     {
         return gCost + hCost;
