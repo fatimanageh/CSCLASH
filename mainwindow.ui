@@ -14,6 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+<<<<<<< HEAD
    <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
@@ -33,15 +34,43 @@
      </item>
      <item row="0" column="0">
       <widget class="QPushButton" name="StartPB">
+=======
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>500</y>
+      <width>295</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="pushButtonStart">
+>>>>>>> 03ae53d56e40e85bd84ec031a80cbf56a2614d5a
        <property name="text">
         <string>Start</string>
        </property>
       </widget>
      </item>
+<<<<<<< HEAD
      <item row="0" column="2">
       <widget class="QPushButton" name="OptionsPB">
        <property name="text">
         <string>Options</string>
+=======
+     <item>
+      <widget class="QPushButton" name="pushButtonSettings">
+       <property name="text">
+        <string>Settings</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonExit">
+       <property name="text">
+        <string>Exit</string>
+>>>>>>> 03ae53d56e40e85bd84ec031a80cbf56a2614d5a
        </property>
       </widget>
      </item>
@@ -54,7 +83,11 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
+<<<<<<< HEAD
      <height>17</height>
+=======
+     <height>26</height>
+>>>>>>> 03ae53d56e40e85bd84ec031a80cbf56a2614d5a
     </rect>
    </property>
   </widget>

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/photos">
+        <file>enemy.png</file>
+        <file>playe.png.webp</file>
+    </qresource>
+</RCC>

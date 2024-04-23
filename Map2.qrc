@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/map2">
+        <file>desert land.png</file>
+        <file>SandCastle.png</file>
+        <file>SandFence.png</file>
+        <file>SandTower.png</file>
+    </qresource>
+</RCC>

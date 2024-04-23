@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
  #include "mainwindow.h"
 
@@ -19,3 +20,16 @@ int main(int argc, char *argv[])
     return a.exec();
 }
 
+=======
+#include "mainwindow.h"
+#include<QApplication>
+
+
+int main(int argc, char *argv[]) {
+    QApplication a(argc, argv);
+    MainWindow mainWindow;
+    mainWindow.show();
+
+    return a.exec();
+}
+>>>>>>> 03ae53d56e40e85bd84ec031a80cbf56a2614d5a
