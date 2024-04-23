@@ -1,26 +1,35 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
-#include <QGraphicsPixmapItem>
 #include <QObject>
-#include <QGraphicsItem>
+#include <QGraphicsPixmapItem>
+#include <QPoint>
+#include <QTimer>
+#include "node.h"
 
-class Enemy: public QObject, public QGraphicsPixmapItem{
+class Enemy : public QObject, public QGraphicsPixmapItem
+{
     Q_OBJECT
+
+    QTimer* currentTimer;
+
+
+    QList<Node*> currentPath;
+
+    bool isCastlePath = false;
+
+
+    int currentNodeOnPath = 0;
+
 public:
-    Enemy(QGraphicsItem* parent =0);
 
+    QPoint coords;
+    Enemy(QPoint, QPixmap);
 public slots:
-    void move();
-
-
-
-
-
+    void processPath(QList<Node*>, bool);
+    void moveOnPath();
+signals:
+    void needNewPath();
 };
-
-
-
-
 
 #endif // ENEMY_H

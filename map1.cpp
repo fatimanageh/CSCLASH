@@ -142,28 +142,20 @@ MAP1::MAP1(QWidget *parent)
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 #include <QGraphicsView>
-#include<QLayout>
+#include <QObject>
 #include "Player.h"
 
 Map1::Map1(QWidget *parent)
-    : QObject(parent)
+    : QObject(nullptr)
 {
     scene = new QGraphicsScene();
     this->mainWindow = static_cast<MainWindow*>(parent);
     setupScene();
-
-    //added
-    Player* player= new Player;
-    scene->addItem(player);
-    player->setPos(800,-800);
-
 }
 
 
 void Map1::setupScene()
 {
-
-
     loadmapfromfile(":/text/map1.txt");
     QGraphicsView* view = new QGraphicsView(scene);
     view->setFixedSize(scene->width(), scene->height());
@@ -198,35 +190,45 @@ void Map1::loadmapfromfile(const QString &filename)
         lines.append(in.readLine());
     }
 
-    QHash<QPoint, Node*> grid;
 
     for (int i = 0; i < lines.count(); i++)
     {
         QString line = lines[i];
+
+        for (int j = 0;  j < line.length() / 2; j++)
+        {
+            QGraphicsPixmapItem *image1 = new QGraphicsPixmapItem(tilemap1.map1land.scaled(pixelWidth, pixelHeight));
+            image1->setPos(posX, posY);
+            scene->addItem(image1);
+            posX += pixelWidth;
+        }
+
+        posX = 0;
+
         for (int j = 0; j < line.length() / 2; j++)
         {
             Node* node = new Node(QPoint(i, j));
+            Node* nodeFake = new Node(QPoint(i, j));
+            nodeFake->isWalkable = true;
             QChar character = line[j * 2];
             if (character == '0') {
                 node->isWalkable = true;
-                QGraphicsPixmapItem *image1 = new QGraphicsPixmapItem(tilemap1.map1land.scaled(pixelWidth, pixelHeight));
-                image1->setPos(posX, posY);
-                scene->addItem(image1);
             } else if (character == '1') {
                 node->isWalkable = false;
-                QGraphicsPixmapItem *image2 = new QGraphicsPixmapItem(tilemap1.map1Castle.scaled(pixelWidth, pixelHeight));
-                image2->setPos(posX, posY);
-                scene->addItem(image2);
+                castle = new Building(QPoint(i, j), tilemap1.map1Castle.scaled(pixelWidth, pixelHeight));
+                castle->setPos(posX, posY);
+                scene->addItem(castle);
             } else if (character == '2') {
                 node->isWalkable = false;
-                QGraphicsPixmapItem *image3 = new QGraphicsPixmapItem(tilemap1.map1Canon.scaled(pixelWidth, pixelHeight));
-                image3->setPos(posX, posY);
-                scene->addItem(image3);
+                Building* cannon = new Building(QPoint(i,j), tilemap1.map1Canon.scaled(pixelWidth, pixelHeight));
+                cannon->setPos(posX, posY);
+                scene->addItem(cannon);
+                otherBuildings.push_back(cannon);
             } else if (character == '3') {
                 node->isWalkable = false;
-                QGraphicsPixmapItem *image1 = new QGraphicsPixmapItem(tilemap1.map1fence.scaled(pixelWidth, pixelHeight));
-                image1->setPos(posX, posY);
-                scene->addItem(image1);
+                Building* fence = new Building(QPoint(i,j), tilemap1.map1fence.scaled(pixelWidth, pixelHeight));
+                fence->setPos(posX, posY);
+                scene->addItem(fence);
                 /*QChar charLeft = (j != 0) ? line[j - 1] : 'N';
                 QChar charRight = (j != (line.length() - 1)) ? line[j + 1] : 'N';
                 QChar charUp = (i != 0) ? lines[i - 1][j] : 'N';
@@ -254,23 +256,78 @@ void Map1::loadmapfromfile(const QString &filename)
                 QGraphicsPixmapItem* fence = new QGraphicsPixmapItem(tilemap1.fences1[corner].scaled(pixelWidth, pixelHeight));
 
                 fence->setPos(posX, posY);
-                scene->addItem(fence);*/
+                scene->addItem(fence);*/ // All of this is to needs different fence pictures to be found;
 
             }
             grid[node->coords] = node;
+            gridWithoutObstacles[nodeFake->coords] = nodeFake;
             posX += pixelWidth;
         }
         posX = 0;
         posY += pixelHeight;
     }
 
+<<<<<<< HEAD
     QMessageBox::information(this->mainWindow, "Error", QString::number(grid.count()));
     PathFinder path(QPoint(0,0), QPoint(9,9), grid);
 
 >>>>>>> 03ae53d56e40e85bd84ec031a80cbf56a2614d5a
 
+=======
+>>>>>>> 865d4b12affb5689c356e759be28e18fdd81bae6
     file.close();
 
+    Enemy* enemy1 = new Enemy(QPoint(0,0), QPixmap(":/photos/enemy.png").scaled(50,50));
+    Enemy* enemy2 = new Enemy(QPoint(8,8), QPixmap(":/photos/enemy.png").scaled(50,50));
+
+    scene->addItem(enemy1);
+
+    enemies.push_back(enemy1);
+
+    for (int i = 0; i < enemies.count(); i++)
+    {
+        Enemy* enemy = enemies[i];
+        PathFinder path(enemy->coords, castle->coords, gridWithoutObstacles);
+        QList<Node*> obstacles;
+        for (Node* node : path.path)
+        {
+            Node* realNode = grid[node->coords];
+            if (!realNode->isWalkable) obstacles.push_back(realNode);
+        }
+        if (obstacles.count() == 0)
+        {
+            enemy->processPath(path.path, true);
+        }
+        else
+        {
+            Node* newEnd = obstacles[0];
+            PathFinder newPath(enemy->coords, newEnd->coords, gridWithoutObstacles);
+            enemy->processPath(path.path, false);
+            QObject::connect(enemy ,SIGNAL(needNewPath()), this, SLOT(giveNewPath()));
+        }
+    }
+}
+
+void Map1::giveNewPath()
+{
+    Enemy* enemy = static_cast<Enemy*>(sender());
+    PathFinder path(enemy->coords, castle->coords, gridWithoutObstacles);
+    QList<Node*> obstacles;
+    for (Node* node : path.path)
+    {
+        Node* realNode = grid[node->coords];
+        if (!realNode->isWalkable) obstacles.push_back(node);
+    }
+    if (obstacles.count() == 0)
+    {
+        enemy->processPath(path.path, true);
+    }
+    else
+    {
+        Node* newEnd = obstacles[0];
+        PathFinder newPath(enemy->coords, newEnd->coords, gridWithoutObstacles);
+        enemy->processPath(path.path, false);
+    }
 }
 <<<<<<< HEAD
 
